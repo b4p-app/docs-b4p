@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   sodipodi:docname="b4p-dataflow.svg"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"
+   version="1.1"
+   id="svg3334"
+   viewBox="0 0 900.00007 720.00004"
+   height="8in"
+   width="10in">
+  <defs
+     id="defs3336">
+    <inkscape:perspective
+       id="perspective3346"
+       inkscape:persp3d-origin="450.00004 : 240.00001 : 1"
+       inkscape:vp_z="900.00007 : 360.00002 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 360.00002 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <sodipodi:namedview
+     inkscape:document-rotation="0"
+     inkscape:snap-others="false"
+     inkscape:snap-object-midpoints="false"
+     inkscape:snap-text-baseline="false"
+     showguides="false"
+     inkscape:window-maximized="0"
+     inkscape:window-y="23"
+     inkscape:window-x="34"
+     inkscape:window-height="1000"
+     inkscape:window-width="1354"
+     width="10in"
+     units="in"
+     showgrid="false"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="px"
+     inkscape:cy="360"
+     inkscape:cx="450"
+     inkscape:zoom="1.0733333"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base">
+    <inkscape:grid
+       id="grid3396"
+       type="xygrid" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3339">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0,-332.3625)"
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1">
+    <flowRoot
+       transform="matrix(1.2821352,0,0,1.3523888,706.39435,317.85059)"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.01%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="flowRoot3366"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3368"><rect
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.49275684px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start"
+           y="27.411167"
+           x="74.010155"
+           height="140.39047"
+           width="82.835716"
+           id="rect3370" /></flowRegion><flowPara
+         style="font-size:9.49276px;line-height:1.25"
+         id="flowPara4202">ZOOM</flowPara><flowPara
+         style="font-size:9.49276px;line-height:1.25"
+         id="flowPara4204">ctl-scroll</flowPara><flowPara
+         style="font-size:9.49276px;line-height:1.25"
+         id="flowPara4206"> </flowPara><flowPara
+         style="font-size:9.49276px;line-height:1.25"
+         id="flowPara4208">VIEW: </flowPara><flowPara
+         style="font-size:9.49276px;line-height:1.25"
+         id="flowPara4210">	1	 1:1</flowPara><flowPara
+         style="font-size:9.49276px;line-height:1.25"
+         id="flowPara4212">	2	 1:2 </flowPara><flowPara
+         style="font-size:9.49276px;line-height:1.25"
+         id="flowPara4214">	3	 selection</flowPara><flowPara
+         style="font-size:9.49276px;line-height:1.25"
+         id="flowPara4216">	4	 drawing</flowPara><flowPara
+         style="font-size:9.49276px;line-height:1.25"
+         id="flowPara4218">	5	 page</flowPara><flowPara
+         style="font-size:9.49276px;line-height:1.25"
+         id="flowPara4220">	6	 width</flowPara><flowPara
+         style="font-size:9.49276px;line-height:1.25"
+         id="flowPara4222"> </flowPara><flowPara
+         style="font-size:9.49276px;line-height:1.25"
+         id="flowPara4224"> </flowPara></flowRoot>
+    <text
+       id="text3386"
+       y="590.02747"
+       x="99.59391"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-size:40px;line-height:1.25"
+         y="590.02747"
+         x="99.59391"
+         id="tspan3388"
+         sodipodi:role="line"> </tspan><tspan
+         style="font-size:40px;line-height:1.25"
+         id="tspan3390"
+         y="640.02747"
+         x="99.59391"
+         sodipodi:role="line"> </tspan></text>
+    <text
+       id="text3394"
+       y="379.87518"
+       x="85.888329"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-size:40px;line-height:1.25"
+         y="379.87518"
+         x="85.888329"
+         id="tspan3396"
+         sodipodi:role="line"> </tspan></text>
+    <text
+       id="text3369"
+       y="490.87595"
+       x="385.93317"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-size:40px;line-height:1.25"
+         y="490.87595"
+         x="385.93317"
+         id="tspan3371"
+         sodipodi:role="line"> </tspan></text>
+    <rect
+       y="495.69714"
+       x="151.97983"
+       height="94.332306"
+       width="121.40918"
+       id="rect68"
+       style="fill:#0064e0;stroke-width:4.36688" />
+  </g>
+</svg>
