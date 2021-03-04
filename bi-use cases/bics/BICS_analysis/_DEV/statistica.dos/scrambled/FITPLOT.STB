@@ -1,0 +1,15 @@
+{\rtf1\ansi{\fonttbl{\f0 \fmodern Courier New;}{\f1 \fswiss Arial Narrow;}}{\colortbl ;\red0\green0\blue0 
+;}\margl720\margr720\margt720\margb720\plain\pard
+\{ fit data to various functions
+\}\par RandomAccess;\par SelectVariables2('Select one X-variable  and one Y-variable', \par\tab\tab 
+1, 1, xvar, count1, 'Select one X variable',\par\tab\tab 1, 1, yvar, count2, 'Select one Y variable'
+);\par\par graph:=NewGraph(SCATTERPLOT, 'Scatterplot1', \par\tab\tab VarName(yvar), VarName(xvar),\par\tab\tab 
+NCases, Data(1,xvar), Data(1,yvar)   );\par\pard\tx750 GraphSetPlotPointStyle(graph, 1 , on, p_circl
+e, 1, blue );\par GraphSetDefaultFont( graph,'courier', 8, black);\par\par GraphSetPlotFitting(graph
+, 1, Fit_POLYNOMIAL);\par GraphSetPlotFittingParam(graph, 1, 5, ?LogBase);\par GraphSetPlotConfidBan
+ds(graph, 1, On, .95);\tab
+\{poly only
+\}\par\pard\par DisplayGraph(graph);\par
+\{\par\pard\tx750 FitType\tab fit type for 2D graph:  \par FIT_LINEAR, FIT_LOG, FIT_EXP, FIT_SPLINE,
+ \par FIT_POLYNOMIAL, FIT_LEASTSQUARES, or FIT_NEGEXP\par
+\}\par\f1\par}

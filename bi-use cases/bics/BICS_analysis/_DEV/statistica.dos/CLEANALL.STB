@@ -1,0 +1,16 @@
+{--- THRESHOLD CLEAN - UNIVERSAL RANGE ---}
+{
+USAGE: All variables, starting at COLSTART,
+are threshold cleaned at universal values. 
+Values below the universal MIN or above the 
+universal MAX are replaced by missing data.
+}
+Sequential;
+COLSTART:=2;	{start column}
+MIN:=0;			{universal minimum}
+MAX:=140;		{universal maximum}
+
+for i:= COLSTART to NVars do 
+	begin;
+	if ( v(i) <= MIN ) or (v(i) > MAX )then v(i):= Missing
+	end;

@@ -1,0 +1,27 @@
+RandomAccess;
+begin;
+CRITSLOPE:=0.3;
+CRITSLOPE2:=0.5;
+for i := 2 to NCases-1 do
+	begin;
+	j:=5;		{LHead}
+	jnew:=6;		{LHeadNew}
+	FLAG:=0;
+	data(i,jnew):=Missing;
+	if (not Valid( data(i,j)) ) then FLAG:=0
+
+	else if ( Valid(data(i-1,j)) and  Valid(data(i+1,j))  ) then
+	begin;
+	if (Abs(data(i+1,j) - data(i,j) ) < CRITSLOPE ) 
+		then FLAG:=1;
+	if (Abs(data(i,j) - data(i-1,j) ) < CRITSLOPE ) 
+		then FLAG:=1;
+	if (Abs(data(i+1,j) - 2*data(i,j) + data(i-1,j) ) < CRITSLOPE2 ) 
+		then FLAG:=1;
+	end;
+	
+	if FLAG = 1 then data(i,jnew) := data(i,j);
+	end; 
+
+end;
+

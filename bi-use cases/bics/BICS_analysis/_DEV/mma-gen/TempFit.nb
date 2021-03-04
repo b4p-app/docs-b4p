@@ -1,0 +1,1391 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='%s'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[     27615,       1029]*)
+(*NotebookOutlinePosition[     28487,       1061]*)
+(*  CellTagsIndexPosition[     28443,       1057]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+
+Cell[TextData[StyleBox["Regression Analysis",
+  FontSize->14]], "Title",
+  PageBreakAbove->False,
+  AspectRatioFixed->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[TextData[StyleBox["1994  Rafael Richards",
+  FontSize->6]], "SmallText",
+  PageBreakAbove->False,
+  TextAlignment->Center,
+  AspectRatioFixed->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[CellGroupData[{Cell["Code", "Subsection",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[CellGroupData[{Cell["Data Input", "Subsubsection",
+  PageBreakAbove->False,
+  AspectRatioFixed->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[CellGroupData[{Cell["\<\
+(* Put relevant data and package files in path *)
+$Path = Join[$Path, {\"RAFAEL:Apps:Mathematica:Packages:Statistics \"}];
+$Path = Join[$Path, {\"RAFAEL:SEP:data\"}];
+
+numCols \t= 25;
+inputformat = Table[ Number, {numCols}];
+filename\t= \"albert.txt\";
+data \t\t= ReadList[filename,inputformat];
+
+
+col = Transpose[data];
+v[n_]:= col[[n]]
+
+numRows = Length[data];
+casenum = Range[ numRows];
+numPoints = numRows*numCols;
+
+
+dataInfo  := Block[ { },
+   Print[\"File analyzed :           \", filename ];
+   Print[\"Rows in raw data:         \", numRows ];
+   Print[\"Columns in raw data:      \", numCols  ];
+   Print[\"Total data points:        \", numPoints  ]
+];
+
+dataInfo
+\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+File analyzed :           albert.txt
+Rows in raw data:         673
+Columns in raw data:      25
+Total data points:        16825\
+\>", "Print",
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]]}, Open]],
+
+Cell[CellGroupData[{Cell["Variable Names", "Subsubsection",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[CellGroupData[{Cell["\<\
+(* To ask the system which variable one is operating on, define
+\tthe list of variables *)
+\t
+vars = {\tPtNo, \tDtime, Ntemp, Rtemp,\t
+\t\t\tIncis, IMA, Stern, CPB, Cool,\t
+\t\t\terbL,\tp10L,\tn13L,\tn18L,\tn20L,
+\t\t\terbR,\tp10R,\tn13R,\tn18R,\tn20R,
+\t\t\tp22L,   ampL,   p22R, AmpR,\t
+\t\t\tNtempR, Event
+\t\t\t};
+var[n_]:= vars[[n]]
+
+(* check lengths are equal *)
+TrueQ[Length[vars] == numCols]
+
+\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[OutputFormData["\<\
+True\
+\>", "\<\
+True\
+\>"], "Output",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]]}, Open]],
+
+Cell[CellGroupData[{Cell["Range Selection", "Subsubsection",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+selAll = Table[True, {numRows}];
+selNone= Table[False, {numRows}];
+
+(* Initially set selection to all cases *)
+sel = selAll;
+
+
+SelectYRange[n_, ymin_, ymax_]:= 
+\tDo[ If[ \t\t
+\t\tN[ v[n][[i]] ] <=  ymin  ||  N[ v[n][[i]] ] >=  ymax, Null, 
+\t\t\t\t\t\tsel[[i]] = False],
+\t{i,1,numRows}
+\t];
+(* Selects cases of variable[n] that falls in min/max range *)
+
+
+SelectNonZero[n_]:= 
+\t\t\tDo[ If[   \tv[n][[i]]  != 0., Null,sel[[i]] = False],
+\t\t\t\t{i,1, numRows}
+\t\t\t  ]
+\t(* Omits cases of variable[n] that are zero *)
+\t
+SelectNonMissing[n_]:= 
+\t\t\tDo[ If[  v[n][[i]] <= -500. || v[n][[i]] >= 500., 
+\t\t\t\t\t\t\t\t\t\tsel[[i]] = False, Null],
+\t\t\t\t{i,1, numRows}
+\t\t\t  ]
+\t(* OMITS cases of variable[n] that are missing data *)
+\t
+
+SelectMissing[n_]:= 
+\t\t\tDo[ If[  v[n][[i]] <= -500. || v[n][[i]] >= 500., 
+\t\t\t\t\t\t\t\t\t\tNull, sel[[i]] = False ],
+\t\t\t\t{i,1, numRows}
+\t\t\t  ]
+\t(* CHOSES cases of variable[n] that are missing data *)
+\t
+
+SelectON[n_]:= 
+\t\t\tDo[ If[   v[n][[i]]  == 1., Null ,sel[[i]] = False],
+\t\t\t\t{i,1, numRows}
+\t\t\t  ]
+\t(* Omits cases of variable[n] that are not = 1 *)
+\t
+SelectOFF[n_]:= 
+\t\t\tDo[ If[   \tv[n][[i]]  == 1., sel[[i]] = False, Null],
+\t\t\t\t{i,1, numRows}
+\t\t\t  ]
+\t(* Omits cases of variable[n] that are not = 0 *)
+
+
+
+SelectPtNo[k_]:= Do[If[ v[1][[i]] == k,  , sel[[i]] = False ],
+\t\t\t\t\t{i,1,numRows}
+\t\t\t\t\t]
+\t(* Selects cases for patient[k] *)
+
+
+SelectTime[tmin_,tmax_]:=\t
+\tDo[ If[ \t\t
+\t\tN[ v[2][[i]] ] >=  tmin  &&  N[ v[2][[i]] ] <=  tmax,  , 
+\t\t\t\t\t\tsel[[i]] = False],
+\t{i,1,numRows}
+\t];
+\t(* If Dtime = v[2], select decimal time range *)
+\t\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["Case Number Range Selecton", "Subsubsection",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[CellGroupData[{Cell["1-D and 2-D syntax", "Text",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+(* Pattern matching for data input structure:
+ ------ For 1-dimenstional list ------
+fun[data, {xmin, xmax, dx}] 
+fun[list:{_?NumberQ...}, {xmin_?NumberQ, xmax_?NumberQ, dx_:1}] :=
+
+------- For 2-dimensional list ------
+fun[{{x1,y1}, {x2,y2}, ...}, {xmin, xmax, dx}, {ymin, ymax, dy}]
+fun[list:{{_?NumberQ...}...}, 
+\t\tbins:{_?NumberQ, _?NumberQ, Optional[_, 1]}..] := 
+*)
+\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["\<\
+(* Selecting cases manually overrides all other selections *)
+
+(* ----- 1-dimensional list ----- *)
+SelectCases[{min_?NumberQ, max_?NumberQ}]:= 
+
+Module[{},
+\t\tsel = selNone;
+\t\tDo[ If[
+\t\tcasenum[[i]] >= min  &&  casenum[[i]] <= max,
+\t\t\t\t\t\t\t\t\t\t\tsel[[i]] = True, Null ],
+\t\t{i,1,numRows}
+\t\t];
+\t]
+\t
+(* ----- 2-dimensional list ----- *)
+SelectCases[list:{{_?NumberQ,_?NumberQ}...}]:= 
+
+Module[{},
+\tsel = selNone;
+\tDo[
+\t\tDo[ If[
+\t\tcasenum[[i]] >= list[[j,1]]  &&  casenum[[i]] <= list[[j,2]],
+\t\t\t\t\t\t\t\t\t\t\tsel[[i]] = True, Null],
+\t\t{i,1,numRows}
+\t\t],
+\t
+\t{j,1,Length[list]}
+\t]
+]
+\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+General::spell1: Possible spelling error: new symbol name \"list\"
+     is similar to existing symbol \"List\".\
+\>", "Message",
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]]}, Open]],
+
+Cell[CellGroupData[{Cell["Boolean Selection", "Subsubsection",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[TextData[{
+  StyleBox["\n",
+    FontFamily->"Courier",
+    FontSize->10],
+  StyleBox["Make the list of data pairs { sel[i], list[i] } by transposing \
+the two vectors sel and list.\n\t\t\t\tTranspose[{sel, list}]\n\tSelect[list, \
+crit] picks out all elements ei of list for which crit[ei] is True.\n\t\t\t\t\
+Select[ {sel[i],list[i]}, First] applies First to the data pair \
+{sel[i],list[i]}\n\t\t\t\t\t\t\t\t\t\t\tFirst[{sel,lis}]\n\t\t\tThis \
+evaluates to either True or False.\n\t\t\tThe pair {sel,lis} is picked based \
+on this evaluation.\n\tMap[f, expr] or f /@ expr applies f to each element on \
+the first level in expr.\t\n\t\t\t\tMap[Last, {sel[i],list[i]}]\n\t\t\t takes \
+the last (second) element of the picked pair {s,l}.",
+    FontFamily->"Courier",
+    FontSize->9],
+  "\n"
+}], "Text",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+BoolSelect[list_List, sel_List] := 
+\tMap[Last, Select[Transpose[{sel, list}], First]] /; 
+\t\t\t\t\tLength[list] == Length[sel];\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["FitStats", "Subsubsection",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[CellGroupData[{Cell["other code", "Text",
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+\t(*
+\tPrint[
+\tNdat,\"\\t\",b,\"\\t \
+\\t\",xxSS,\"\\t\",xySS,\"\\t\\t\",yySS,\"\\t\\t\",resSS,
+\t\t\t\t\t\t\"\\t\",resDF,\"\\t \\t\",rSqr];
+
+\tcolumnLabels=StringJoin[
+\t\"n\",\"\\t\",\"b\",\"\\t \\t \
+\\t\",\"xxSS\",\"\\t\\t\",\"xySS\",\"\\t\\t\\t\",\"yySS\",\"\\t\\t\\t\",\"\
+resSS\",
+\t\t\t\t\t\t\"\\t\",\"resDF\",\"\\t\", \"rSqr\"];
+\t*)
+\
+\>", "Input",
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell["\<\
+FitStats[dat_List]:=Module[{},
+
+\tvMean[list_List] := Apply[Plus, list] / Length[list];
+\tvSum[list_List]:=Apply[Plus, list];
+
+
+\tTdat = Transpose[dat];
+\tXdat = Tdat[[1]];
+\tYdat = Tdat[[2]];
+
+\tNdat = Length[Xdat];
+\ttotDF = Ndat -1;
+\tregDF = 1;
+\tresDF = Ndat - 2;
+\t
+\tXsum = Xdat //vSum;
+\tYsum = Ydat //vSum;
+\t
+\tXYsum = Xdat Ydat //vSum;
+\tYYsum = Ydat Ydat //vSum;
+\tXXsum = Xdat Xdat //vSum;
+\t
+\txySS  = XYsum - (Xsum Ysum)/Ndat;
+\txxSS  = XXsum - (Xsum Xsum)/Ndat;
+\tyySS  = YYsum - (Ysum Ysum)/Ndat;
+\t
+\ttotSS = yySS;
+\tregSS = (xySS)^2/xxSS;
+\tresSS = totSS - regSS;
+\t
+\ttotMS = totSS/totDF;
+\tregMS = regSS/regDF;
+\tresMS = resSS/resDF;
+\t
+\tb     = xySS/xxSS;\t
+\tSE    = Sxy = Sqrt[resMS];
+\tt     = b/SE;
+\trSqr  = regSS/totSS;
+\t
+
+\tcolLabel = \
+{\"n\",\"b\",\"SE\",\"t\",\"rSqr\",\"resSS\",\"resDF\",\"xxSS\"};
+\toutput =   {Ndat,b,  SE,  t,  rSqr,  resSS,  resDF,  xxSS};
+\tPrint[output];
+\t
+\t(*
+\tSxx  = Sqrt[xxSS/totDF];
+\tSyy  = Sqrt[yySS/totDF];
+\t
+\tYmean = Ysum/Ndat;
+\tSEnorm= SE/Ymean;
+\t*)
+\t
+
+\t];
+\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["TempFits", "Subsubsection",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+TempFits[m_]:=Module[{n,p,k,selK,selC,selW,v1sel,v2sel,
+\t\t\t\t\tlindat,logdat,
+\t\t\t\t\ttempC, latC,datC,tempW,latW,datW},
+\t\t
+\t\t(* W=warm; C=cool *)
+\t\tk = 8;\t(* variable: CPB *)
+\t\tp = 9;\t(* variable: COOLING *)
+\t\tn = 3;\t(* variable: Ntemp *)
+
+\t\tsel = selAll;
+\t\tSelectNonMissing[m];
+\t\tSelectNonMissing[n];
+\t\tselK = sel;
+\t\t
+\t\tv1sel = BoolSelect[v[n],selK];
+\t\tv2sel = BoolSelect[v[m],selK];
+\t\tlindat = Transpose[{v1sel,v2sel}];
+\t\tlogdat = Transpose[{v1sel+273,Log[v2sel]}];
+
+\t\t
+\t\tsel = selK;
+\t\tSelectON[9]\t\t(* Cooling ON *)
+\t\tselC = sel;
+\t\t(* casesC = BoolSelect[casenum,selC] //Length; *)
+\t\ttempC= BoolSelect[v[n],selC];
+\t\tlatC = BoolSelect[v[m],selC];
+\t\tdatC = Transpose[{tempC,latC}];
+
+\t\tsel = selK;
+\t\tSelectON[8];\t(* CPB ON *)
+\t\tSelectOFF[9]\t(* Cooling OFF *)
+\t\tselW = sel;
+\t\t(* casesW=BoolSelect[casenum,selW]//Length; *)
+\t\ttempW= BoolSelect[v[n],selW];
+\t\tlatW = BoolSelect[v[m],selW];
+\t\tdatW = Transpose[{tempW,latW}];
+\t\t
+
+\t\tFitStats[lindat] ;
+\t\tFitStats[datC]   ;
+\t\tFitStats[datW]   ;
+
+\t]
+\t\t\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]]}, Open]],
+
+Cell[CellGroupData[{Cell["Function Summary", "Subsection",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+sel = selAll,selNone\t\t(* resets selection vector of all cases *)
+n,m\t\t\t\t\t\t\t(* variable(column) index numbers\t\t*)\t\t\t\t
+v[n]\t\t\t\t\t\t(* data vector of variable n \t\t\t*)
+vars\t\t\t\t\t\t(* prints out list of variables \t\t*)
+
+SelectYRange[n, ymin, ymax]\t(* selects var[n] in range min to max \t*)
+SelectNonZero[n]\t\t\t(* selects var[n] non-zero\t\t\t\t*)
+SelectNonMissing[n]\t\t\t(* selects var[n] NOT-missing \t\t\t*)
+SelectMissing[n]\t\t\t(* selects var[n] missing \t\t\t*)
+SelectOFF[n]\t\t\t\t(* selects var[n] = 0\t   \t\t\t\t*)
+SelectON[n]\t\t\t\t\t(* selects var[n] = 1\t   \t\t\t\t*)
+SelectTime[tmin,tmax]\t\t(* selects decimal time range \t\t\t*)
+SelectPtNo[k]\t\t\t\t(* selects patient number k \t\t\t*)
+
+SelectCases[{min,max}]\t\t\t(* select case[min] to case[max]\t*)
+SelectCases[{{mini,maxi},..}]\t(* select multiple ranges of cases \t*)
+
+BoolSelect[v[n], sel]\t\t(* selects v[n] based on selection vector *)
+\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["columnLabels", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[OutputFormData["\<\
+\"n\\tb\\t \\t \\t \\txxSS\\t\\txySS\\t\\t \
+yySS\\t\\tresSS\\tresDF\\trSqr\"\
+\>", "\<\
+n\tb\t \t \t \txxSS\t\txySS\t\t \
+yySS\t\tresSS\tresDF\trSqr\
+\>"], "Output",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["\<\
+var[12]\t\t\t(* erb *)
+TempFits[12]\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[OutputFormData["\<\
+erbL\
+\>", "\<\
+erbL\
+\>"], "Output",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+647\t-0.424064\t \t11193.3\t-4746.66\t\t3638.24\t\t1625.35\t645\t \t\
+0.55326
+460\t-0.40807\t \t2187.02\t-892.457\t\t1412.12\t\t1047.93\t458\t \t0.2579
+187\t-0.598643\t \t3048.2\t-1824.78\t\t1534.86\t\t442.465\t185\t \t0.711723\
+\
+\>", "Print",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["\<\
+var[19]
+TempFits[19]\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[OutputFormData["\<\
+erbR\
+\>", "\<\
+erbR\
+\>"], "Output",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+636\t-0.414665\t \t11137.\t-4618.11\t\t3171.\t\t1256.03\t634\t \t\
+0.6039
+450\t-0.378867\t \t2140.71\t-811.044\t\t1048.94\t\t741.662\t448\t \t0.292941
+186\t-0.557382\t \t3018.88\t-1682.67\t\t1367.04\t\t429.149\t184\t \t\
+0.686074\
+\>", "Print",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["\<\
+var[14]\t\t\t(* n13 *)
+TempFits[14]\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[OutputFormData["\<\
+n13L\
+\>", "\<\
+n13L\
+\>"], "Output",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+643\t-0.752033\t \t11129.4\t-8369.67\t\t9574.14\t\t3279.87\t641\t \t\
+0.657424
+458\t-0.531178\t \t2202.63\t-1169.99\t\t1715.84\t\t1094.37\t456\t \t0.362196
+185\t-1.06133\t \t3076.55\t-3265.24\t\t5212.26\t\t1746.77\t183\t \t0.664872\
+\
+\>", "Print",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["\<\
+var[20]
+TempFits[20]\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[OutputFormData["\<\
+n13R\
+\>", "\<\
+n13R\
+\>"], "Output",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+655\t-0.698149\t \t11005.5\t-7683.46\t\t7595.93\t\t2231.73\t653\t \t\
+0.706194
+471\t-0.495903\t \t2331.09\t-1155.99\t\t1346.03\t\t772.767\t469\t \t0.425891
+184\t-0.926978\t \t2926.62\t-2712.91\t\t3718.33\t\t1203.53\t182\t \t\
+0.676326\
+\>", "Print",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["\<\
+var[15]\t\t\t(* n18 *)
+TempFits[15]\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[OutputFormData["\<\
+n18L\
+\>", "\<\
+n18L\
+\>"], "Output",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+630\t-0.865019\t \t10282.4\t-8894.52\t\t10468.2\t\t2774.31\t628\t \t\
+0.734978
+454\t-0.654159\t \t2203.37\t-1441.36\t\t2096.77\t\t1153.89\t452\t \t0.449681
+176\t-1.13512\t \t2774.6\t-3149.5\t\t\t4879.81\t\t1304.74\t174\t \t0.732625\
+\
+\>", "Print",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["\<\
+var[20]
+TempFits[21]\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[OutputFormData["\<\
+n13R\
+\>", "\<\
+n13R\
+\>"], "Output",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+630\t-0.867331\t \t9788.57\t-8489.93\t\t9539.23\t\t2175.65\t628\t \t\
+0.771926
+461\t-0.622154\t \t2221.17\t-1381.91\t\t1593.88\t\t734.116\t459\t \t0.539416
+169\t-1.1143\t\t \t2637.8\t-2939.29\t\t4420.06\t\t1144.81\t167\t \t0.740996\
+\
+\>", "Print",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["\<\
+var[16]\t\t\t(* n20 *)
+TempFits[16]\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[OutputFormData["\<\
+n20L\
+\>", "\<\
+n20L\
+\>"], "Output",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+653\t-1.04796\t \t10288.4\t-10781.9\t\t14553.6\t\t3254.62\t651\t \t\
+0.77637
+471\t-0.823878\t \t2219.09\t-1828.26\t\t2952.16\t\t1445.9\t469\t \t0.510224
+182\t-1.30974\t \t2680.25\t-3510.44\t\t6103.65\t\t1505.87\t180\t \t0.753284\
+\
+\>", "Print",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["\<\
+var[22]
+TempFits[22]\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[OutputFormData["\<\
+n20R\
+\>", "\<\
+n20R\
+\>"], "Output",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+657\t-1.00103\t \t10184.3\t-10194.7\t\t12943.6\t\t2738.35\t655\t \t\
+0.788439
+477\t-0.795123\t\t2337.77\t-1858.81\t\t2766.56\t\t1288.57\t475\t \t0.534232
+180\t-1.19328\t\t2550.16\t-3043.06\t\t4887.62\t\t1256.39\t178\t \t\
+0.742945\
+\>", "Print",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["\<\
+var[17]\t\t\t(* p22 *)
+TempFits[17]\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[OutputFormData["\<\
+p22L\
+\>", "\<\
+p22L\
+\>"], "Output",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+652\t-1.27858\t \t10219.7\t-13066.7\t\t22018.8\t\t5311.95\t650\t \t\
+0.758754
+471\t-0.983658\t \t2219.1\t-2182.83\t\t4292.08\t\t2144.92\t469\t \t0.500261
+181\t-1.60467\t \t2666.61\t-4279.03\t\t9548.21\t\t2681.78\t179\t \t0.719133\
+\
+\>", "Print",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["\<\
+var[23]
+TempFits[23]\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[OutputFormData["\<\
+p22R\
+\>", "\<\
+p22R\
+\>"], "Output",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+650\t-1.2106\t \t\t10074.4\t-12196.1\t\t18853.3\t\t4088.62\t648\t \t\
+0.783134
+471\t-0.939067\t \t2331.58\t-2189.51\t\t4056.\t\t1999.91\t469\t \t0.506927
+179\t-1.38726\t \t2536.53\t-3518.83\t\t6712.59\t\t1831.07\t177\t \t0.727218\
+\
+\>", "Print",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["Unused", "Subsection",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[CellGroupData[{Cell["reference", "Subsubsection",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[CellGroupData[{Cell["Statistics", "Text",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[TextData[{
+  "You can often avoid using loops in ",
+  StyleBox["Mathematica  ",
+    FontSlant->"Italic"],
+  "by operating directly on complete lists. The resulting programs are \
+usually more elegant and more efficient. Here are programs for computing the \
+mean, variance, and quantiles of a list."
+}], "Text",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+
+Mean[list_List] := Apply[Plus, list] / Length[list]\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["Variance[list_List] := Mean[ (list - Mean[list])^2 ]", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+Quantile[list_List, q_] := 
+         Part[ Sort[list],
+              -Floor[-q Length[list]] ] /; 0 < q < 1\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]]}, Open]],
+
+Cell[CellGroupData[{Cell["External Packages", "Subsubsection",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[CellGroupData[{Cell["<<RAFAEL:Mathematica:Packages:Statistics:NonlinearFit.m", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["<<RAFAEL:Mathematica:Packages:Statistics:LinearRegression.m", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["<<RAFAEL:Mathematica:Packages:Statistics:MovingAverage.m", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["?MovingAverage", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+MovingAverage[list,n] returns a list of the n-th moving averages of
+   list.\
+\>", "Info",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["?NonlinearFit", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+NonlinearFit[data,model,vars,params,(opts)] uses iterative methods
+   to fit the data to the model containing the given variables and
+   parameters.  Paramaters may be expressed as a list of symbols
+   or {symbol, startingvalue} pairs.  The data are given as {{x1,
+   y1, ..., f1},{x2, y2, ... f2},...}; some variations on this are
+   also valid (see documentation.)\
+\>", "Info",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell["\<\
+<<RAFAEL:Mathematica:Packages:NumericalMath:PolynomialFit.m
+(* <<RAFAEL:Mathematica:Packages:NumericalMath:SplineFit.m  *)\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["<<RAFAEL:Mathematica:Packages:Graphics:Spline.m", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["Regression", "Subsubsection",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[CellGroupData[{Cell["Fit[  ]", "Text",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+(* built-in Fit[] function 10x faster than Regress[] package *)
+
+linfit[n_,m_]:=Module[{v1sel,v2sel,datsel,line},
+
+\t\tv1sel = BoolSelect[v[n],sel];
+\t\tv2sel = BoolSelect[v[m],sel];
+\t\tdatsel = Transpose[{v1sel,v2sel}];
+\t\t
+\t\tline = Fit[ Transpose[{v1sel,v2sel}],{1,x},x]
+\t\t]
+\t\t
+linA[n_,m_]:= linfit[v[n],v[m]] [[1]];
+linB[n_,m_]:= linfit[v[n],v[m]] [[2,1]];
+\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["LinearRegression.m", "Text",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[CellGroupData[{Cell["\<\
+(* load external package for regression parameters *)
+<<RAFAEL:Mathematica:Packages:Statistics:LinearRegression.m
+  \
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[CellGroupData[{Cell["??Regress", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+Regress[data, funs, vars] finds a least-squares fit to a list of \
+data as a
+   linear combination of the functions funs of variables vars. The data can
+   have the form {{x1, y1, ..., f1}, {x2, y2, ..., f2}, ...}, where the
+   number of coordinates x, y, ... is equal to the number of variables in
+   the list vars.  The data can also be of the form {f1, f2, ...}, with a
+   single coordinate assumed to take values 1, 2, .... The argument funs can
+   be any list of functions that depend only on the objects vars.
+
+Attributes[Regress] = {Protected, ReadProtected}\
+\>", "Info",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["Options[Regress]  ", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[OutputFormData["\<\
+{OutputList -> Null, OutputControl -> Automatic, \
+IncludeConstant -> True, 
+  BasisNames -> Automatic, Weights -> Equal, Tolerance -> Automatic, 
+  ConfidenceLevel -> 0.95}\
+\>", "\<\
+{OutputList -> Null, OutputControl -> \
+Automatic, IncludeConstant -> True, 
+ 
+  BasisNames -> Automatic, Weights -> Equal, Tolerance -> Automatic, 
+ 
+  ConfidenceLevel -> 0.95}\
+\>"], "Output",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]]}, Open]],
+
+Cell["\<\
+linR2[n_,m_]:= Module[{v1sel,v2sel,datsel,reg },
+
+\t\tv1sel = BoolSelect[v[n],sel];
+\t\tv2sel = BoolSelect[v[m],sel];
+\t\tdatsel = Transpose[{v1sel,v2sel}];
+\t
+\t\treg = Regress[datsel,{1,x},x,
+\t\tOutputControl-> NoPrint,
+\t\tOutputList->{RSquared} \t(*BestFitCoefficients,BestFit *)
+\t\t];
+\t\t
+\t\t(* {a,b}=BestFitCoefficients /. reg[[1]]  *)
+\t\tRSquared /. reg[[1]]
+\t]
+\t
+RSqr[dat_]:= Module[{reg},
+\t\t\t\treg = Regress[ dat, {1,x},x,
+\t\t\t\t\tOutputControl ->NoPrint,
+\t\t\t\t\tOutputList ->{RSquared}
+\t\t\t\t\t];
+\t\t\t\tRSquared /. reg[[1]]
+\t\t\t\t]\
+\>", "Input",
+  PageBreakAbove->False,
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]]}, Open]]}, Open]],
+
+Cell["<<ConfidenceIntervals.m", "Input",
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[CellGroupData[{Cell["?StudentTCI", "Input",
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+StudentTCI[mean, se, dof, ConfidenceLevel -> c] returns a list \
+{min,
+   max} representing a confidence interval at  confidence level c for
+   the population mean, based on a sample mean, its standard error se
+   and dof degrees of freedom. This function is used by MeanCI when the
+   population variance is estimated from the sample.\
+\>", "Info",
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["?StudentTDistribution", "Input",
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+StudentTDistribution[n] represents Student's T distribution with n
+   degrees of freedom.\
+\>", "Info",
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["?StudentTDistribution", "Input",
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+StudentTDistribution[n] represents Student's T distribution with n
+   degrees of freedom.\
+\>", "Info",
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["StudentTDistribution", "Input",
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[OutputFormData["\<\
+StudentTDistribution\
+\>", "\<\
+StudentTDistribution\
+\
+\>"], "Output",
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell["<<ContinuousDistributions.m", "Input",
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[CellGroupData[{Cell["?NoncentralStudentTDistribution", "Input",
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+NoncentralStudentTDistribution[n, delta] represents the non-central
+   Student's t distribution with n degrees of freedom and non-centrality
+   parameter delta.\
+\>", "Info",
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell["<<HypothesisTests.m", "Input",
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell[CellGroupData[{Cell["?*StudentT*", "Input",
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+NoncentralStudentTDistribution StudentTDistribution
+StudentTCI                     StudentTPValue\
+\>", "Info",
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]],
+
+Cell[CellGroupData[{Cell["?StudentTPValue", "Input",
+  ImageRegion->{{-0, 1}, {0, 1}}],
+
+Cell["\<\
+StudentTPValue[teststat, dof] returns the cumulative density beyond
+   teststat for the StudentTDistribution, with dof degrees of freedom.\
+\>", \
+"Info",
+  ImageRegion->{{-0, 1}, {0, 1}}]}, Open]]
+},
+FrontEndVersion->"5.0 for Macintosh",
+ScreenRectangle->{{0, 1276}, {0, 778}},
+WindowToolbars->{},
+Evaluator->"Local",
+CellGrouping->Manual,
+WindowSize->{520, 656},
+WindowMargins->{{84, Automatic}, {16, Automatic}},
+PrivateNotebookOptions->{"ColorPalette"->{RGBColor, -1}},
+ShowCellLabel->True,
+ShowCellTags->False,
+RenderingOptions->{"ObjectDithering"->True,
+"RasterDithering"->False}
+]
+
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+
+(*NotebookFileOutline
+Notebook[{
+Cell[1743, 53, 158, 4, 70, "Title",
+  PageBreakAbove->False],
+Cell[1904, 59, 188, 5, 70, "SmallText",
+  PageBreakAbove->False],
+
+Cell[CellGroupData[{
+Cell[2115, 66, 85, 2, 70, "Subsection",
+  PageBreakAbove->False],
+
+Cell[CellGroupData[{
+Cell[2223, 70, 121, 3, 70, "Subsubsection",
+  PageBreakAbove->False],
+
+Cell[CellGroupData[{
+Cell[2367, 75, 755, 30, 70, "Input",
+  PageBreakAbove->False],
+Cell[3125, 107, 186, 6, 70, "Print"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[3352, 115, 98, 2, 70, "Subsubsection",
+  PageBreakAbove->False],
+
+Cell[CellGroupData[{
+Cell[3473, 119, 485, 19, 70, "Input",
+  PageBreakAbove->False],
+Cell[3961, 140, 121, 6, 70, "Output",
+  PageBreakAbove->False]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[4123, 148, 99, 2, 70, "Subsubsection",
+  PageBreakAbove->False],
+Cell[4225, 152, 1724, 69, 70, "Input",
+  PageBreakAbove->False]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[5981, 223, 110, 2, 70, "Subsubsection",
+  PageBreakAbove->False],
+
+Cell[CellGroupData[{
+Cell[6114, 227, 93, 2, 70, "Text",
+  PageBreakAbove->False],
+Cell[6210, 231, 458, 14, 70, "Input",
+  PageBreakAbove->False]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[6700, 247, 700, 33, 70, "Input",
+  PageBreakAbove->False],
+Cell[7403, 282, 172, 4, 70, "Message"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[7616, 288, 101, 2, 70, "Subsubsection",
+  PageBreakAbove->False],
+Cell[7720, 292, 867, 18, 70, "Text",
+  PageBreakAbove->False],
+Cell[8590, 312, 213, 6, 70, "Input",
+  PageBreakAbove->False]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[8835, 320, 92, 2, 70, "Subsubsection",
+  PageBreakAbove->False],
+
+Cell[CellGroupData[{
+Cell[8950, 324, 60, 1, 70, "Text"],
+Cell[9013, 327, 403, 15, 70, "Input"]
+}, Closed]],
+Cell[9428, 344, 1117, 59, 70, "Input",
+  PageBreakAbove->False]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[10577, 405, 92, 2, 70, "Subsubsection",
+  PageBreakAbove->False],
+Cell[10672, 409, 1160, 47, 70, "Input",
+  PageBreakAbove->False]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[11873, 458, 97, 2, 70, "Subsection",
+  PageBreakAbove->False],
+Cell[11973, 462, 1023, 22, 70, "Input",
+  PageBreakAbove->False]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[13028, 486, 88, 2, 70, "Input",
+  PageBreakAbove->False],
+Cell[13119, 490, 250, 8, 70, "Output",
+  PageBreakAbove->False]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[13401, 500, 119, 5, 70, "Input",
+  PageBreakAbove->False],
+Cell[13523, 507, 121, 6, 70, "Output",
+  PageBreakAbove->False],
+Cell[13647, 515, 313, 8, 70, "Print",
+  PageBreakAbove->False]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[13992, 525, 104, 5, 70, "Input",
+  PageBreakAbove->False],
+Cell[14099, 532, 121, 6, 70, "Output",
+  PageBreakAbove->False],
+Cell[14223, 540, 313, 8, 70, "Print",
+  PageBreakAbove->False]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[14568, 550, 119, 5, 70, "Input",
+  PageBreakAbove->False],
+Cell[14690, 557, 121, 6, 70, "Output",
+  PageBreakAbove->False],
+Cell[14814, 565, 317, 8, 70, "Print",
+  PageBreakAbove->False]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[15163, 575, 104, 5, 70, "Input",
+  PageBreakAbove->False],
+Cell[15270, 582, 121, 6, 70, "Output",
+  PageBreakAbove->False],
+Cell[15394, 590, 318, 8, 70, "Print",
+  PageBreakAbove->False]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[15744, 600, 119, 5, 70, "Input",
+  PageBreakAbove->False],
+Cell[15866, 607, 121, 6, 70, "Output",
+  PageBreakAbove->False],
+Cell[15990, 615, 317, 8, 70, "Print",
+  PageBreakAbove->False]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[16339, 625, 104, 5, 70, "Input",
+  PageBreakAbove->False],
+Cell[16446, 632, 121, 6, 70, "Output",
+  PageBreakAbove->False],
+Cell[16570, 640, 317, 8, 70, "Print",
+  PageBreakAbove->False]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[16919, 650, 119, 5, 70, "Input",
+  PageBreakAbove->False],
+Cell[17041, 657, 121, 6, 70, "Output",
+  PageBreakAbove->False],
+Cell[17165, 665, 314, 8, 70, "Print",
+  PageBreakAbove->False]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[17511, 675, 104, 5, 70, "Input",
+  PageBreakAbove->False],
+Cell[17618, 682, 121, 6, 70, "Output",
+  PageBreakAbove->False],
+Cell[17742, 690, 314, 8, 70, "Print",
+  PageBreakAbove->False]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[18088, 700, 119, 5, 70, "Input",
+  PageBreakAbove->False],
+Cell[18210, 707, 121, 6, 70, "Output",
+  PageBreakAbove->False],
+Cell[18334, 715, 315, 8, 70, "Print",
+  PageBreakAbove->False]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[18681, 725, 104, 5, 70, "Input",
+  PageBreakAbove->False],
+Cell[18788, 732, 121, 6, 70, "Output",
+  PageBreakAbove->False],
+Cell[18912, 740, 315, 8, 70, "Print",
+  PageBreakAbove->False]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[19259, 750, 87, 2, 70, "Subsection",
+  PageBreakAbove->False],
+
+Cell[CellGroupData[{
+Cell[19369, 754, 93, 2, 70, "Subsubsection",
+  PageBreakAbove->False],
+
+Cell[CellGroupData[{
+Cell[19485, 758, 85, 2, 70, "Text",
+  PageBreakAbove->False],
+Cell[19573, 762, 375, 9, 70, "Text",
+  PageBreakAbove->False],
+Cell[19951, 773, 136, 5, 70, "Input",
+  PageBreakAbove->False],
+Cell[20090, 780, 128, 2, 70, "Input",
+  PageBreakAbove->False],
+Cell[20221, 784, 191, 6, 70, "Input",
+  PageBreakAbove->False]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[20453, 792, 101, 2, 70, "Subsubsection",
+  PageBreakAbove->False],
+
+Cell[CellGroupData[{
+Cell[20577, 796, 131, 2, 70, "Input",
+  PageBreakAbove->False],
+Cell[20711, 800, 135, 2, 70, "Input",
+  PageBreakAbove->False],
+Cell[20849, 804, 132, 2, 70, "Input",
+  PageBreakAbove->False]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[21013, 808, 90, 2, 70, "Input",
+  PageBreakAbove->False],
+Cell[21106, 812, 159, 5, 70, "Info",
+  PageBreakAbove->False]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[21297, 819, 89, 2, 70, "Input",
+  PageBreakAbove->False],
+Cell[21389, 823, 449, 9, 70, "Info",
+  PageBreakAbove->False]
+}, Closed]],
+Cell[21850, 834, 206, 5, 70, "Input",
+  PageBreakAbove->False],
+Cell[22059, 841, 123, 2, 70, "Input",
+  PageBreakAbove->False]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[22214, 845, 94, 2, 70, "Subsubsection",
+  PageBreakAbove->False],
+
+Cell[CellGroupData[{
+Cell[22331, 849, 82, 2, 70, "Text",
+  PageBreakAbove->False],
+Cell[22416, 853, 452, 17, 70, "Input",
+  PageBreakAbove->False]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[22900, 872, 93, 2, 70, "Text",
+  PageBreakAbove->False],
+
+Cell[CellGroupData[{
+Cell[23016, 876, 200, 6, 70, "Input",
+  PageBreakAbove->False],
+
+Cell[CellGroupData[{
+Cell[23239, 884, 85, 2, 70, "Input",
+  PageBreakAbove->False],
+Cell[23327, 888, 648, 13, 70, "Info",
+  PageBreakAbove->False]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[24007, 903, 94, 2, 70, "Input",
+  PageBreakAbove->False],
+Cell[24104, 907, 463, 14, 70, "Output",
+  PageBreakAbove->False]
+}, Open  ]]
+}, Open  ]],
+Cell[24588, 923, 646, 25, 70, "Input",
+  PageBreakAbove->False]
+}, Closed]]
+}, Closed]]
+}, Closed]],
+Cell[25264, 950, 74, 1, 70, "Input"],
+
+Cell[CellGroupData[{
+Cell[25361, 953, 62, 1, 70, "Input"],
+Cell[25426, 956, 393, 8, 70, "Info"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[25851, 966, 72, 1, 70, "Input"],
+Cell[25926, 969, 147, 4, 70, "Info"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[26105, 975, 72, 1, 70, "Input"],
+Cell[26180, 978, 147, 4, 70, "Info"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[26359, 984, 71, 1, 70, "Input"],
+Cell[26433, 987, 130, 6, 70, "Output"]
+}, Open  ]],
+Cell[26575, 995, 78, 1, 70, "Input"],
+
+Cell[CellGroupData[{
+Cell[26676, 998, 82, 1, 70, "Input"],
+Cell[26761, 1001, 218, 5, 70, "Info"]
+}, Open  ]],
+Cell[26991, 1008, 70, 1, 70, "Input"],
+
+Cell[CellGroupData[{
+Cell[27084, 1011, 62, 1, 70, "Input"],
+Cell[27149, 1014, 155, 4, 70, "Info"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[27336, 1020, 66, 1, 70, "Input"],
+Cell[27405, 1023, 198, 5, 70, "Info"]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)

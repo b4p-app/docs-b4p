@@ -1,0 +1,7 @@
+{\rtf1\ansi{\fonttbl{\f0 \fswiss Arial;}{\f1 \fswiss Arial Narrow;}}{\colortbl ;\red0\green0\blue0 ;
+}\margl720\margr720\margt720\margb720\plain\pard\pard\tx5235
+\{ scrollsheet = output sheet: are random access to get Data(i,j) 
+\}\par\pard RandomAccess;\par SCROLL := GetScrollSheet( 0 );\par ScrollSheetSetFont( SCROLL, 'arial 
+narrow', 9);\par SaveScrollsheet( SCROLL, 'c:
+\\templow
+\\rcpclean.sta' );\par\f1\par}

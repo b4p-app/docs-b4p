@@ -1,0 +1,26 @@
+{--- THRESHOLD CLEAN - INDIVIDUAL RANGES ---}
+{
+USAGE: 
+Values below the minimum, or above the maximum
+thresholds are replaced by missing data.
+
+IMPORTANT:
+1)Before executing, be sure to check for
+correct min/max ranges.
+2)If a variable does not exist, or there is
+a name mismatch, the program will not work.
+Check that the below names match column names.
+NOTE:
+Statistica is not case sensitive. BP=bp=Bp=bP.
+}
+
+Sequential;
+
+if not Valid(HR) then Delete;
+if (BP <= 60)	or (BP >120 )			then BP := Missing;
+if (ICP <= 0) 	or (ICP >50 )			then ICP := Missing;
+if (PAP <= 0) 	or (PAP >40 )			then PAP := Missing;
+if (SVO2_J <= 40) or (SVO2_J >120)		then SVO2_J := Missing;
+if (ET_PCO2 <= 15) or (ET_PCO2 >45 )	then ET_PCO2 := Missing;
+if (RESP_P <= 60) or (RESP_P >120 )		then RESP_P := Missing;
+if (RESP_V <= 40) or (RESP_V >60 )		then RESP_V := Missing;

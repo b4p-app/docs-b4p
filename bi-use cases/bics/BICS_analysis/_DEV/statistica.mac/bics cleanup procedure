@@ -1,0 +1,1 @@
+1) import to statistica mac2) delete non-data cols3) calculate cpp=bp-icp4) run 'clean.qml' program5) inspect for	a) characters in cols	b) bignums6) import to BBEdit7) remove top variable names

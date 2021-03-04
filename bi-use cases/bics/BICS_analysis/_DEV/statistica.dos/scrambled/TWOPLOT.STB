@@ -1,0 +1,12 @@
+{\rtf1\ansi{\fonttbl{\f0 \fswiss Arial;}{\f1 \fmodern Courier New;}{\f2 \fswiss Arial Narrow;}}{\colortbl 
+;\red0\green0\blue0 ;\red0\green0\blue0 ;}\margl720\margr720\margt720\margb720\plain\pard\f1
+\{plot two y-vars on single x-axis
+\}\par\par RandomAccess;\par ReDim yvar( 2 );\par SelectVariables2('Select 1 X-variable  and 2 Y-var
+iables', \par\tab\tab 1, 1, xvar, count1, 'Select one X variable',\par\tab\tab 1, 2, yvar, count2, '
+Select two Y variables');\par i := 1;\par graph1:=NewGraph(SCATTERPLOT, 'Scatterplot1', \par\tab\tab 
+VarName(yvar(i)), VarName(xvar),\par\tab\tab NCases, Data(1,xvar), Data(1,yvar(i) )  );\par\pard\tx750 
+GraphSetPlotPointStyle( graph1, 1 , on, p_circle, 1, blue );\par\par GraphSetPlotFitting(graph1, 1, 
+Fit_POLYNOMIAL);\par GraphSetPlotFittingParam(graph1, 1, 5, ?LogBase);\par GraphSetPlotConfidBands(g
+raph1, 1, On, .95);\tab\par\par\pard i := 2;\par graph2 := GraphAddPlot (graph1, LINEPLOT, 'epoch av
+g', \par\tab\tab\tab NCases, Data(1,xvar), Data(1,yvar(i) )  );\par GraphSetPlotLineStyle( graph1, 2
+, ON, L_SOLID, 1, TEAL);\par\par\f2\par}

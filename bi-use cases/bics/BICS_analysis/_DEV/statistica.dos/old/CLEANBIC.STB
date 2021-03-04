@@ -1,0 +1,42 @@
+Sequential;
+{------- clean data within individual ranges -----------
+if not Valid(HR) then Delete;
+if (BP <= 60)	or (BP >120 )		then BP := Missing;
+if (ICP <= 0) 	or (ICP >50 )		then ICP := Missing;
+if (PAP <= 0) 	or (PAP >40 )		then PAP := Missing;
+if (SVO2_J <= 40) or (SVO2_J >120)		then SVO2_J := Missing;
+if (ET_PCO2 <= 15) or (ET_PCO2 >45 )	then ET_PCO2 := Missing;
+if (RESP_P <= 60) or (RESP_P >120 )	then RESP_P := Missing;
+if (RESP_V <= 40) or (RESP_V >60 )		then RESP_V := Missing;
+}
+
+{ ------- clean data all in range 0-140 ----------- }
+for i:= 2 to 9 do 
+	begin;
+	if ( v(i) <= 0 ) or (v(i) >140 )then v(i):= Missing
+	end;
+
+{------------ TIME VARIABLE  ------------
+const	Tvar = 4;		{time variable}
+const	Tmax = 24;		{max time}
+const	Tmin   = 8;		{min time}
+begin;
+	TEMP := v( Tvar );
+	if ( TEMP < Tmin ) or ( TEMP > Tmax  )  then 
+		Delete
+	else
+		v( Tvar ) := TEMP;
+end;
+}
+{ ------ TEMPERATURE VARIABLES ----------
+for i:= 2  to 3 do 
+begin;
+	TEMP := v(i);
+	if ( TEMP < Pmin ) or ( TEMP > Pmax  )  then
+		 v( i ) := Missing
+	else
+		v( i ) := TEMP;
+end;
+}
+
+

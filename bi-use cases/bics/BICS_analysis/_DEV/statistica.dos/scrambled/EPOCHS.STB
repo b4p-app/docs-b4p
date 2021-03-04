@@ -1,0 +1,26 @@
+{\rtf1\ansi{\fonttbl{\f0 \fmodern Courier New;}{\f1 \fswiss Arial;}}{\colortbl ;\red0\green0\blue0 ;
+}\margl720\margr720\margt720\margb720\plain\pard\f1
+\{ noise reduction via moving average 
+\}\par RandomAccess;\par const\tab varTime = 1;\tab\tab
+\{time variable column number
+\}\par const\tab tEpoch = 0.2;\tab\tab
+\{time per epoch, hours
+\}\par\par ValMax(varTime, 1, Ncases, tMax);                    \par ValMin(varTime, 1, Ncases, tMin
+);\par tLen  := tMax - tMin;\par WriteLn('time Min: ', tMin );\par WriteLn('time Max: ', tMax );\par 
+WriteLn('time Elapsed:  ', tLen);\par\pard\tx3012\par epochNum := Trunc( tLen / tEpoch);\tab\tab
+\{ number of epochs 
+\}\par epochCases :=  Trunc( NCases/epochNum );\tab
+\{cases per epoch 
+\}\par remainder :=  NCases - (epochNum * epochCases)\par\pard\par WriteLn('NCases:  ', NCases);\par 
+WriteLn('epochCases:  ', epochCases);\par WriteLn('epochNum:  ', epochNum);\par WriteLn('remainder: 
+ ', remainder);\par\par
+\{\par SelectVariables1 (?Title$, 1, 1,  varSel, numSel, 'select ONE variable');\par WriteLn('column
+ selected: ', varSel);\par var$ := VarName(varSel);\par WriteLn('var selected: ', var$ );\par\par\pard\tx1224 
+for  m := 0  to (epochNum-1) do\par\pard\tab begin;\par\tab ValMean ( Data(1,varSel) , m*epochLen, e
+pochLen, meanResult);\par\tab WriteLn('epoch ', m, 'mean: ', meanResult);\par\tab\tab begin;\par\tab\tab 
+for  i := ( m*epochLen+1) to ( m*epochLen + epochLen ) do\par\tab\tab Data(i,9) := meanResult;\par\tab\tab 
+end;\par\tab end;\par\par\par\par
+\{\par const\tab epochCases =250;\tab\tab
+\{epoch length, cases
+\}\par epochNum :=  Trunc( NCases/epochLen  );\par remainder :=   NCases - ( epochLen * epochNum);\par
+\}\par\par}

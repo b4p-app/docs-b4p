@@ -1,0 +1,83 @@
+{-- noise reduction via moving average --}
+
+ RandomAccess;
+
+ const	tVar = 1;		{time variable column number}
+ const	 mVar = 4;		{moving average variable}
+ const	tEpoch = 0.1;	{time per epoch, hours}
+
+ ValMax( Data(1,tVar), 1, Ncases, tMax);                    
+ ValMin( Data(1,tVar), 1, Ncases, tMin);
+ tLen    := tMax - tMin;
+ nEpoch  := Trunc( tLen / tEpoch);
+ caseEpoch :=  Trunc( NCases/ nEpoch );
+ caseRemain :=  NCases - (nEpoch * caseEpoch);
+ epochRemain := Trunc( caseRemain/caseEpoch) +1;
+ totEpoch  := nEpoch + epochRemain;
+ totCaseRemain := NCases - (totEpoch*caseEpoch);
+
+
+WriteLn('time Min:     ', tMin );
+WriteLn('time Max:     ', tMax );
+WriteLn('time Elapsed: ', tLen);
+WriteLn('time Epoch:   ', tEpoch);		{time per epoch}
+WriteLn('NCases:       ', NCases);
+WriteLn('num Epochs:   ', nEpoch);		{number of epochs}
+WriteLn('cases Epoch:  ', caseEpoch);	{cases per epoch}
+WriteLn('case remain:  ', caseRemain);	{remainder cases}
+WriteLn('epoch remain: ', epochRemain);	{remainder epochs}
+
+
+SelectVariables1 (?Title$, 1, 1,varSel, numSel, 
+ 			 'select ONE variable');
+ var$ := VarName(varSel);
+  WriteLn('var selected: ', var$ );
+  WriteLn('-----------------------');
+
+
+{-- initialize mVar column to all Missing Data --}
+ for i := 1 to NCases do 
+ 	 begin;
+ 	 Data(i,mVar) := -9999. ;
+ 	 end;
+ 
+ 
+{-----main loop ----}
+
+for  m := 0  to (nEpoch-1) do
+	 begin;
+	 ValMean ( Data(1,varSel),(m*caseEpoch+1),caseEpoch,mean);
+	 WriteLn('epoch ',m, 'mean ', mean);
+		 begin;
+		 
+for  i :=  (m*caseEpoch+1) to (m+1)*caseEpoch do
+		 Data(i,mVar) := mean;
+		 end;
+end;
+
+
+{---- remainder cases set to mean ----}
+ ValMean ( Data(1,varSel), NCases-caseRemain,caseRemain,mean);
+ 	 WriteLn('final epoch mean ', mean);
+		 begin;
+		 for  i := (NCases-caseRemain) to NCases do
+		 Data(i,mVar) := mean;
+		 end;
+
+
+{------- PLOTTING --------- }
+ graph1:=NewGraph(SCATTERPLOT, 'Scatterplot1', 
+ 		VarName(varSel), VarName(tVar),
+ 		NCases, Data(1,tVar), Data(1, varSel )  );
+
+GraphSetPlotPointStyle( graph1, 1 , on, p_circle, 1, blue );
+GraphSetPlotFitting(graph1, 1, Fit_POLYNOMIAL);
+GraphSetPlotFitting(graph1, 1, 8, ?LogBase);
+GraphSetPlotConfidBands(graph1, 1, On, .95);	
+ 
+graph2 :=
+ GraphAddPlot (graph1, LINEPLOT, 'epoch avg', 
+ 			 NCases, Data(1,tVar), Data(1,mVar )  
+);
+
+GraphSetPlotLineStyle( graph1, 2, ON, L_SOLID, .5, BLACK);

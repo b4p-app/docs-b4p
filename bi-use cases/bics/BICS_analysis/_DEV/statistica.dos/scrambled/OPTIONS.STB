@@ -1,0 +1,37 @@
+{\rtf1\ansi{\fonttbl{\f0 \fmodern Courier New;}}{\colortbl ;}\margl720\margr720\margt720\margb720\plain\pard\par 
+DERIVATIVES OPTIONS\par
+\{\par DerivR(1):= 0.0;\par DerivL(1):= 0.0;\par Deriv2(1):= 0.0;\par for large changes, consider pr
+evious deriv\par if DerivL(i-1) > 1.0 then FLAG:=0;\par\par TOO EXPENSIVE TO SEARCH FOR NEAREST NON-
+MISSING NEIGHBOR\par\tab k:=1;\par\tab n:=1;\par\tab begin;\par\tab if not Valid( Lhead(i+k ) ) then\par\tab\tab 
+k:= k+1;\par\tab if not Valid( Lhead(i-n ) ) then\par\tab\tab n:= n+1;\par\tab end;\par
+\}\par\par\par
+\{ fit data to various functions
+\}\par RandomAccess;\par SelectVariables2('Select one X-variable  and one Y-variable', \par\tab\tab 
+1, 1, xvar, count1, 'Select one X variable',\par\tab\tab 1, 1, yvar, count2, 'Select one Y variable'
+);\par\par graph:=NewGraph(SCATTERPLOT, 'Scatterplot1', \par\tab\tab VarName(yvar), VarName(xvar),\par\tab\tab 
+NCases, Data(1,xvar), Data(1,yvar)   );\par\pard\tx750 GraphSetPlotPointStyle(graph, 1 , on, p_circl
+e, 1, blue );\par GraphSetPlotFitting(graph, 1, Fit_SPLINE);\tab
+\{other fits below
+\}\par\pard\par
+\{\par\pard\tx750\par\par GraphSetPlotFitting(graph, 1, Fit_POLYNOMIAL);\par GraphSetPlotFittingPara
+m(graph, 1, 5, ?LogBase);\par GraphSetPlotConfidBands(graph, 1, On, .95);\tab
+\{poly only
+\}\par\pard ----fit types\par\pard\tx750 FIT_LINEAR, FIT_LOG, FIT_EXP, FIT_SPLINE, \par FIT_POLYNOMI
+AL, FIT_LEASTSQUARES, or FIT_NEGEXP\par\pard\par\par\par GraphSetDefaultFont(graph,'courier', 8, bla
+ck);\par\pard\tx750 GraphSetPlotPointStyle(graph, 1 , on, p_circle, 1, blue );\par ----point styles\par\pard 
+P_CROSS, P_STAR, P_FILLED_DIAMOND, P_FILLED_TRIANGLE, P_FILLED_SQUARE, \par P_FILLED_CIRCLE, P_DIAMO
+ND, P_TRIANGLE, P_SQUARE, P_CIRCLE, or \par P_HORIZONTAL_LINE\par ----colors\par BLACK, MAROON, GREE
+N, OLIVE, NAVY, PURPLE, TEAL, \par GRAY, SILVER, RED, LIME, YELLOW, BLUE, FUSCHIA, \par AQUA, WHITE,
+(see ColorRGB)\par\par XMIN:= 17.585;\tab\tab XMAX:= 17.605;\tab\tab XGRID:= 0.001;\par YMIN:= 0.0;\tab\tab 
+YMAX:= 40;\tab\tab YGRID:=10;\par GraphSetScaling ( graph, ax_x, scaling_manual,XMIN,XMAX,XGRID);\par\pard\tx750 
+GraphSetScaling ( graph, ax_y, scaling_manual,YMIN,YMAX,YGRID);\par\pard\par GaphSetPlot2DLayout(gra
+ph, lplot, LINEPLOT, DATALABELS_Y, \par\tab\tab ?BarStyle, ?BarWidth,?DevLevel, ?IsRightAxis);\par\par\par\par 
+GraphSetPlotLineStyle(graph, 1, On, L_Solid, 3, TEAL);\par\tab PlotNumber\tab number of plot to be c
+hanged or edited\par\tab ?Display\tab display line in graph:  ON or OFF\par\tab ?Pattern\tab line pa
+ttern:  \par\tab\tab\tab L_SOLID, L_LONG_DASH, L_SHORT_DASH, \par\tab\tab\tab L_LONG_SHORT_DASH, L_L
+ONG_SHORT_SHORT_DASH, \par\tab\tab\tab L_DOTTED, or L_DENSE_DOTTED\par\tab ?Size\tab\tab size in poi
+nts\par\tab ?Color\tab\tab color of line:  \par\tab\tab\tab BLACK, MAROON, GREEN, OLIVE, NAVY, PURPL
+E, TEAL, \par\tab\tab\tab GRAY, SILVER, RED, LIME, YELLOW, BLUE, FUSCHIA, \par\tab\tab\tab AQUA, WHI
+TE, or a user-defined color (see ColorRGB)\par\par\par PrintGraphToOutputWindow(graph);\par DisplayG
+raph(graph);\par PrintGraphToOutputWindow (graph);\par\par\pard\tx750
+\}\par}

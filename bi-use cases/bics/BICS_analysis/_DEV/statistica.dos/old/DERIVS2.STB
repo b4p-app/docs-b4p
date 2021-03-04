@@ -1,0 +1,27 @@
+RandomAccess;
+begin;
+CRITSLOPE:=0.3;
+CRITSLOPE2:=0.5;
+for i := 34000  to 35800 do
+	begin;
+	j:=4;		{var}
+	jnew:=6;		{varNew}
+	FLAG:=1;
+	data(i,jnew):=data(i,j);
+
+	if ((not Valid(data(i-1,j))) or (not Valid(data(i+1,j)))) then data(i,jnew):=Missing;
+	if ((not Valid(data(i-1,j))) or (not Valid(data(i+1,j)))) then goto rome;
+	
+	if (Abs(data(i+1,j) - data(i,j) ) >= CRITSLOPE ) 
+		then FLAG:=0;
+	if (Abs(data(i,j) - data(i-1,j) ) >= CRITSLOPE ) 
+		then FLAG:=0;
+	if (Abs(data(i+1,j) - 2*data(i,j) + data(i-1,j) ) >= CRITSLOPE2 ) 
+		then FLAG:=0;
+	
+	if FLAG = 0 then data(i,jnew) := Missing;
+	rome:
+	end; 
+
+end;
+

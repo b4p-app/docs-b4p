@@ -1,0 +1,10 @@
+{\rtf1\ansi{\fonttbl{\f0 \fmodern Courier New;}{\f1 \fswiss Arial Narrow;}{\f2 \fmodern Courier New;}
+}{\colortbl ;\red0\green0\blue0 ;\red0\green0\blue0 ;}\margl720\margr720\margt720\margb720\plain\pard\fs16
+\{plot two y-vars on single x-axis
+\}\par\par RandomAccess;\par ReDim yvar( 2 );\par SelectVariables2('Select 1 X-variable  and 2 Y-var
+iables', \par\tab\tab 1, 1, xvar, count1, 'Select one X variable',\par\tab\tab 1, 2, yvar, count2, '
+Select two Y variables');\par i := 1;\par graph1:=NewGraph( LINEPLOT, 'var 1', \par\tab\tab VarName(
+yvar(i)), VarName(xvar),\par\tab\tab NCases, Data(1,xvar), Data(1,yvar(i) )  );\par\pard\tx750 Graph
+SetPlotLineStyle( graph1, 1 , on, L_SOLID, 1, BLUE );\par\pard\par i := 2;\par graph2 := GraphAddPlo
+t (graph1, LINEPLOT, 'var 2', \par\tab\tab\tab NCases, Data(1,xvar), Data(1,yvar(i) )  );\par GraphS
+etPlotLineStyle( graph1, 2, ON, L_SOLID, 1, RED);\par\par\f1\fs18\par}

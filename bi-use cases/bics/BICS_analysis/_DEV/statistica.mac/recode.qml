@@ -1,0 +1,1 @@
+{ --------- recode missing data to -999 ----------- }for i := 2 to 9 do	if not Valid( v(i) ) then v(i) := -999;{ ----- fix output ---------------- }{for i := 2 to 9 do	if ( v(i) > 0 ) then		v(i) :=  ( v(i)*10/10 )		undefined		v(i) := -999 ;}

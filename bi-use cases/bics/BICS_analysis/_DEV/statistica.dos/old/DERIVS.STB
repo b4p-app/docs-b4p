@@ -1,0 +1,25 @@
+RandomAccess;
+begin;
+FLAG:=1;
+SKIPS:=0;
+for i := 2 to NCases-1 do
+	begin;
+	FLAG:=0;
+	Rnew(i):=Missing;
+	if (not Valid( Rhead(i)) ) then FLAG:=0
+
+	else if ( Valid(Rhead(i-1)) and  Valid(Rhead(i+1))  ) then
+		begin;
+		DerivR := Abs(Rhead(i+1) - Rhead(i));
+		DerivL := Abs(Rhead(i) - Rhead(i-1) );
+		Deriv2 := Abs(Rhead(i+1) - 2*Rhead(i) + Rhead(i-1) );
+
+		if (DerivR(i) < 0.5) then FLAG:=1;
+		if (DerivL(i) < 0.5) then FLAG:=1;
+		if (Deriv2(i) < 0.7) then FLAG:=1;
+		end;
+	
+	if FLAG = 1 then RNew(i) := Rhead(i);
+	end; 
+end;
+

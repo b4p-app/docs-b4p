@@ -1,0 +1,36 @@
+{\rtf1\ansi{\fonttbl{\f0 \fswiss Arial;}{\f1 \fmodern Courier New;}{\f2 \fmodern Courier New;}{\f3 \fmodern Courier New;}
+{\f4 \fmodern Courier New;}}{\colortbl ;\red0\green0\blue0 ;\red0\green0\blue0 ;\red0\green0\blue0 ;\red0\green0\blue0 
+;}\margl720\margr720\margt720\margb720\plain\pard\f3\fs16
+\{\tab\i This program will make a line graph of the values in selected\par\tab cases for selected va
+riables of the data file. \par\tab a maximum of 100000 cases can be plotted in a single plot \par\i0
+\}\par randomaccess;\par\tab maxcase:=100000;\par\tab dim range(2);\tab\par\tab redim x(nvars);\par\tab 
+redim y(nvars);\par\tab redim jlist(nvars);\par\tab\par
+\{select range of cases to plot
+\}\par\tab range(1):=1;range(2):=1;\par\tab if DisplayNumericInputBox ('Select Range of Cases', \par\tab 
+  'From case:|To case:', range)=0 then stop;\tab\par\tab iflag:=0;\par\tab if range(2)-range(1)<0 th
+en iflag:=1;\par\tab if (range(1)<1) or (range(2)<1) then iflag:=1;\par\tab if (range(1)>ncases) or 
+(range(2)>ncases) then iflag:=2;\par\tab if iflag=1 then begin\par\tab   DisplayMessageBox (MB_ICONS
+TOP, 'Invalid Case Range',\par\tab    'You have selected an invalid range of case numbers.');\par\tab 
+  stop;\par\tab end else if iflag=2 then begin;\par\tab   DisplayMessageBox (MB_ICONSTOP, 'Invalid C
+ase Range',\par\tab    'You have selected an invalid range of case numbers (there are not enough cas
+es in the data file).');\par\tab   stop;\par\tab end;\par\tab nplot:=range(2)-range(1)+1;\par\tab if
+ nplot>maxcase then begin\par\tab   DisplayMessageBox (MB_ICONSTOP, 'Too Many Cases',\par\tab    'Se
+lect fewer cases to plot.');\par\tab   stop;\par\tab end;\par\par
+\{select variables to plot
+\}\par\tab kname$:='';\par\tab if SelectVariables1 ('Select Variables', \par\tab    2, nvars, jlist,
+ nrows, 'Variables:')=0 then stop;\tab\par\par
+\{fill x range and make variable names
+\}\par\tab j:=1;\par\tab for i:=1 to nvars do \par\tab\tab begin\par\tab\tab if i=jlist(j) then \par\tab\tab\tab 
+begin;\par\tab  \tab\tab x(j):=j;\par\tab   \tab\tab varnam$:=varnam$+VarName(i)+'|';\par\tab   \tab\tab 
+j:=j+1;\par\tab  \tab\tab end;\par\tab\tab end; \par\par
+\{ make the line graph
+\}\par\tab for iplot:=1 to nplot do begin\par\tab  for i:=1 to nrows do y(i):=data(range(1)+iplot-1,
+jlist(i));\par\tab  if iplot=1 then begin\tab\par\pard\tx8100\tab   graph:=NewGraph (LINEPLOT, \par\pard\tab 
+   'Plot of Values for Selected Cases', \par\tab    'Value', 'Variable', nrows, x, y);\par\tab    if
+ nrows<=28 then \par\tab      GraphSetScaleTextLabels (graph, AX_X, nrows, x, varnam$)\par\tab    el
+se\par\tab      GraphSetScaling (graph, AX_X, SCALING_MANUAL_0, -.5, nrows+.5, 1);\par\tab    GraphS
+etScaleTickmarks (graph, AX_X, ON, ?MajorSize, OFF, ?MinorSize, \tab\tab ?MinorCount);\par\tab    Gr
+aphSetPlotName (graph, iplot, CaseName(range(1)+iplot-1), '');\par\tab   end\par\tab   else begin\par\tab 
+   GraphAddPlot (graph, LINEPLOT, \par\tab      CaseName (range(1)+iplot-1),\par\tab      nrows, x, 
+y) ;\par\tab   end;\par\tab   GraphSetPlotPointStyle (graph, iplot, ON, ?Pattern, ?Size, ?Color);\par 
+ \tab end;\tab\tab\par\tab\par\plain\par}

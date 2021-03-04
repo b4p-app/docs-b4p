@@ -1,0 +1,61 @@
+{---------------- DERIVATIVE CLEAN ---------------}
+{
+Columns are cleaned based on 1st and 2nd derivative.
+Time is recorded in 1-minute intervals, so slope is
+in terms of variability per minute.  For example, a
+critslope of 2.0 means you want to reject the data if
+it changes more than 2.0 units per minute. The second
+derivative is more sensitive to change, and requires
+a larger value, on the order of 2 to 3 times larger 
+than the value used for critslope. If a value of 2.0 
+is chosen for critslope, then critslope2 will probably
+be somewhere in the 4.0 to 6.0 range.
+
+IMPORTANT: before using this routine, add a new column 
+to the data set and label it SCRATCH. 
+
+FUNCTION: CleanDeriv(j, jscr, critslope, critslope2)
+j:			column number of variable to be cleaned
+jscr:		column number of SCRATCH variable.
+critslope:	first derivative cutoff value
+critslope2:	second derivative cutoff value
+}
+
+{-------------definition of subroutine------------}
+RandomAccess;
+SUB	CleanDeriv( j, jscr, critslope, critslope2)
+begin;
+for i := 2  to NCases-1 do
+	begin;
+	FLAG:=1;
+	data(i,jscr):=data(i,j);
+
+	if ((not Valid(data(i-1,j))) or (not Valid(data(i+1,j)))) then data(i,jscr):=Missing;
+	if ((not Valid(data(i-1,j))) or (not Valid(data(i+1,j)))) then goto rome;
+	
+	if (Abs(data(i+1,j) - data(i,j) ) >= critslope ) 
+		then FLAG:=0;
+	if (Abs(data(i,j) - data(i-1,j) ) >= critslope ) 
+		then FLAG:=0;
+	if (Abs(data(i+1,j) - 2*data(i,j) + data(i-1,j) ) >= critslope2 ) 
+		then FLAG:=0;
+	
+	if FLAG = 0 then data(i,jscr) := Missing;
+	rome:
+	end;
+ 
+for i:= i_start to i_end do
+	begin;
+	data(i,j):= data(i,jscr);
+	end;
+	
+end SUB;
+
+{----------------- main program ----------------}
+{EXAMPLE USAGE: var, SCRATCH, critslope, critslope2}
+begin;
+CleanDeriv( 2, 17, 1.0, 3.0);		{var2= BP, var17=SCRATCH}
+CleanDeriv( 3, 17, 2.0, 5.0);		{var3=ICP, var17=SCRATCH}
+
+end;
+

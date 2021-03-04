@@ -1,0 +1,13 @@
+{ -- recodes -999   ==>> Statistica MD --- }
+Sequential;
+for i := 2 to NVars do
+begin;
+	if  ( v(i) = -999 ) then 
+		v(i) := -9999
+	else if ( v(i) > 0 ) then
+		v(i) :=  ( v(i)*10./10. )
+	undefined		
+		v(i) := -9999 ;
+end;
+
+

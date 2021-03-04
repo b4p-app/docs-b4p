@@ -1,0 +1,25 @@
+{\rtf1\ansi{\fonttbl{\f0 \fmodern Courier New;}{\f1 \fswiss Arial;}{\f2 \fswiss Arial;}{\f3 \fmodern Courier New;}
+{\f4 \fmodern Courier New;}}{\colortbl ;\red0\green0\blue0 ;\red0\green0\blue0 ;\red0\green0\blue0 ;\red0\green0\blue0 
+;}\margl720\margr720\margt720\margb720\plain\pard
+\{Options: mode ->sequential,math error -> Set MD, Error level -> 99,999 
+\}\par
+\{ Reassign data outside range LO to HI   and floating point errors 
+\}\par  
+\{v(i):= Missing, v(i) := -9999,  PauseAndEdit, or Delete case
+\}\par Sequential;\par\par
+\{ ------ ALL VARIABLES ----------
+\}\par begin;\par if ( Lhead <= 27.5 ) or ( Lhead > 33.5) \par\tab then Lhead := Missing;\par if ( R
+head <= 28.5 ) or ( Rhead > 34.5) \par\tab then Rhead := Missing;\par end;\par\par\par
+\{------------ TIME VARIABLE  ------------\par const\tab Tvar = 4;\tab\tab
+\{time variable
+\}\par const\tab Tmax = 24;\tab\tab
+\{max time
+\}\par const\tab Tmin   = 8;\tab\tab
+\{min time
+\}\par begin;\par\tab TEMP := v( Tvar );\par\tab if ( TEMP < Tmin ) or ( TEMP > Tmax  )  then \par\tab\tab 
+Delete\par\tab else\par\tab\tab v( Tvar ) := TEMP;\par end;\par
+\}\par
+\{ ------ TEMPERATURE VARIABLES ----------\par for i:= 2  to 3 do \par begin;\par\tab TEMP := v(i);\par\tab 
+if ( TEMP < Pmin ) or ( TEMP > Pmax  )  then\par\tab\tab  v( i ) := Missing\par\tab else\par\tab\tab 
+v( i ) := TEMP;\par end;\par
+\}\par\par\f2\fs18\par}

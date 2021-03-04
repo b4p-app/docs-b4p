@@ -1,0 +1,13 @@
+{\rtf1\ansi{\fonttbl{\f0 \fmodern Courier New;}{\f1 \fmodern Courier New;}{\f2 \fswiss Arial Narrow;}
+}{\colortbl ;\red0\green0\blue0 ;\red0\green0\blue0 ;}\margl720\margr720\margt720\margb720\plain\pard\fs14
+\{plots multiple separate plots for single x-var
+\}\par RandomAccess;\par\pard\tx960 XMIN:= 0.0;\tab\tab\tab XMAX:= 0.5;\tab\tab XGRID:= 0.1;\par\pard 
+YMIN:= 26.0;\tab\tab YMAX:= 35.5;\tab\tab YGRID:= 1.0;\par ReDim yvar(NVars);\par SelectVariables2('
+Select Variables', \par\pard\tx1590\tab\tab 1, 1, xvar, count1, 'Select one X variable',\par\pard\tab\tab 
+1, NVars, yvar, count2, 'Select Y variable(s)');\par for i := 1 to count2 do\par begin;\par graph:=N
+ewGraph(ScatterPlot, 'Title', \par\tab\tab VarName(yvar(i)), VarName(xvar),\par\tab\tab NCases, Data
+(1,Xvar), Data(1,Yvar(i)));\par\pard\tx750 GraphSetDefaultFont( graph,'courier', 8, black);\par Grap
+hSetPlotPointStyle( graph, 1 , on, p_circle, 1, blue );\par DisplayGraph(graph);\par\pard end;\par
+\{\par\pard\tx750 GraphSetScaling ( graph, ax_x, scaling_manual,XMIN,XMAX,XGRID);\par GraphSetScalin
+g ( graph, ax_y, scaling_manual,YMIN,YMAX,YGRID);\par\pard
+\}\par\f2\fs16\par}

@@ -1,0 +1,45 @@
+{\rtf1\ansi{\fonttbl{\f0 \fmodern Courier New;}{\f1 \fswiss Arial;}{\f2 \fmodern Courier New;}{\f3 \fmodern Courier New;}
+}{\colortbl ;\red0\green0\blue0 ;\red0\green0\blue0 ;\red0\green0\blue0 ;}\margl720\margr720\margt720\margb720\plain\pard\fs14
+\{ noise reduction via moving average 
+\}\par RandomAccess;\par const\tab tVar = 1;\tab
+\{time variable column number
+\}\par const\tab mVar = 4;\tab
+\{moving average variable
+\}\par const\tab tEpoch = 0.1;\tab
+\{time per epoch, hours
+\}\par\par ValMax( Data(1,tVar), 1, Ncases, tMax);                    \par ValMin( Data(1,tVar), 1, 
+Ncases, tMin);\par tLen    := tMax - tMin;\par\pard\tx3012 nEpoch  := Trunc( tLen / tEpoch);\par cas
+eEpoch :=  Trunc( NCases/ nEpoch ); \tab\par caseRemain :=  NCases - (nEpoch * caseEpoch);\par epoch
+Remain := Trunc( caseRemain/caseEpoch) +1;\par totEpoch  := nEpoch + epochRemain;\par totCaseRemain 
+:= NCases - (totEpoch*caseEpoch);\par\par\pard WriteLn('time Min:     ', tMin );\par WriteLn('time M
+ax:     ', tMax );\par WriteLn('time Elapsed: ', tLen);\par WriteLn('time Epoch:   ', tEpoch);\tab\tab
+\{time per epoch
+\}\par\pard\tx3012 WriteLn('NCases:       ', NCases);\par\pard WriteLn('num Epochs:   ', nEpoch);\tab\tab
+\{number of epochs
+\}\par WriteLn('cases Epoch:  ', caseEpoch);\tab
+\{cases per epoch 
+\}\par WriteLn('case remain:  ', caseRemain);\tab
+\{remainder cases
+\}\par WriteLn('epoch remain: ', epochRemain);\tab
+\{remainder epochs
+\}\par\b\b0\par SelectVariables1 (?Title$, 1, 1,varSel, numSel, \par\tab\tab\tab 'select ONE variabl
+e');\par var$ := VarName(varSel);\par WriteLn('var selected: ', var$ );\par WriteLn('---------------
+--------');\par\par
+\{-- initialize mVar column to all Missing Data --
+\}\par for i := 1 to NCases do \par\tab begin;\par\tab Data(i,mVar) := -9999. ;\par\tab end;\par\par
+\{-----main loop ----
+\}\par\pard\tx1224 for  m := 0  to (nEpoch-1) do\par\pard\tab begin;\par\tab ValMean ( Data(1,varSel
+),(m*caseEpoch+1),caseEpoch,mean);\par\tab WriteLn('epoch ',m, 'mean ', mean);\par\tab\tab begin;\par\tab\tab 
+for  i :=  (m*caseEpoch+1) to (m+1)*caseEpoch do\par\tab\tab Data(i,mVar) := mean;\par\tab\tab end;\par\tab 
+end;\par\par
+\{---- remainder cases set to mean ----
+\}\par ValMean ( Data(1,varSel), NCases-caseRemain,caseRemain,mean);\par\tab WriteLn('final epoch me
+an ', mean);\par\tab\tab begin;\par\tab\tab for  i := (NCases-caseRemain) to NCases do\par\tab\tab D
+ata(i,mVar) := mean;\par\tab\tab end;\par\par
+\{------- PLOTTING --------- 
+\}\par graph1:=NewGraph(SCATTERPLOT, 'Scatterplot1', \par\tab\tab VarName(varSel), VarName(tVar),\par\tab\tab 
+NCases, Data(1,tVar), Data(1, varSel )  );\par\pard\tx750 GraphSetPlotPointStyle( graph1, 1 , on, p_
+circle, 1, blue );\par GraphSetPlotFitting(graph1, 1, Fit_POLYNOMIAL);\par GraphSetPlotFittingParam(
+graph1, 1, 8, ?LogBase);\par GraphSetPlotConfidBands(graph1, 1, On, .95);\tab\par\pard\par graph2 :=
+ GraphAddPlot (graph1, LINEPLOT, 'epoch avg', \par\tab\tab\tab NCases, Data(1,tVar), Data(1,mVar )  
+);\par GraphSetPlotLineStyle( graph1, 2, ON, L_SOLID, .5, BLACK);\par\par\par\par\par\f1\fs16\par}

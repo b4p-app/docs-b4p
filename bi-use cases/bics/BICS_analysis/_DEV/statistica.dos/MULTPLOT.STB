@@ -1,0 +1,34 @@
+{--------------- MULTI-PLOT -------------}
+{
+USAGE: Choose one x-variable, and any number of 
+y-variables. Multiple xy-plots will be generated.
+}
+
+RandomAccess;
+{put new min/max/grid values here as desired}
+XMIN:= 0.0;		XMAX:= 0.5;			XGRID:= 0.1;
+YMIN:= 26.0;	YMAX:= 35.5;		YGRID:= 1.0;
+
+ReDim yvar(NVars);
+SelectVariables2('Select Variables',
+		1, 1, xvar, count1, 'Select one X variable',
+		1, NVars, yvar, count2, 'Select Y variable(s)'); 
+for i := 1 to count2 do
+begin;
+	 graph:=NewGraph(ScatterPlot, 'Title',
+	 			VarName(yvar(i)), VarName(xvar),
+	 			NCases, Data(1,Xvar), Data(1,Yvar(i)));
+	 GraphSetDefaultFont( graph,'courier', 8, black);
+	 GraphSetPlotPointStyle( graph, 1 , on, p_circle, 1, blue );
+	 DisplayGraph(graph);
+end;
+
+ 
+{GRAPH SCALING: to activate
+ 1) edit MIN/MAX/GRID values above
+ 2) copy one or both of the following lines and insert into
+  program above the line DisplayGraph.
+  
+GraphSetScaling ( graph, ax_x, scaling_manual,XMIN,XMAX,XGRID);
+GraphSetScaling ( graph, ax_y, scaling_manual,YMIN,YMAX,YGRID);
+}
